@@ -26,12 +26,11 @@ for file in data_paths:
 
 all_data[:, 1] *= 9.81
 
-dt = 0.0001
-t_max = 30
+
 
 f = interpolate.interp1d(all_data[:, 0], all_data[:, 1])
-t_array = np.arange(0, t_max, dt)
-zdd_array = f(t_array)
+# t_array = np.arange(0, t_max, dt)
+# zdd_array = f(t_array)
 
 
 
@@ -55,7 +54,10 @@ def S_acc (T: float):
 
     timeit["A1"]
 
-    t = np.arange(0, 30, dt)
+    dt = 0.0001 * 10 * T
+    t_max = 30      
+
+    t = np.arange(0, t_max, dt)
 
     zdd = f(t)
 
@@ -132,7 +134,7 @@ for t in np.arange(minT,maxT,spec_interval):
 
 
 d = interpolate.interp1d(spec_t, spec_acc)
-spec_t_array = np.arange(minT, maxT-1, dt)
+spec_t_array = np.arange(minT, maxT-1, 0.0001)
 spec_array = d(spec_t_array)
 
 end = time.time()

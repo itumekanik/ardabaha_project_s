@@ -128,7 +128,7 @@ spec_t = (np.arange(minT,maxT,spec_interval))
 # print(spec_acc)
 
 
-i=1
+i=2
 for t in np.arange(minT,maxT,spec_interval):
     perc = (i/len(spec_t))*100
     i += 1

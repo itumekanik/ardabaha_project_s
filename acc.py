@@ -36,7 +36,7 @@ f = interpolate.interp1d(all_data[:, 0], all_data[:, 1])
 
 def S_acc (T: float):
 
-    timeit["A1"]
+    # timeit["A1"]
 
     global max_acc
 
@@ -52,7 +52,7 @@ def S_acc (T: float):
     t0 = 0
     t_all = [t0]
 
-    timeit["A1"]
+    # timeit["A1"]
 
     dt = 0.0001 * 10 * T
     t_max = 30      
@@ -61,39 +61,29 @@ def S_acc (T: float):
 
     zdd = f(t)
 
+    zdd_ort_array =  0.5 * (np.roll(zdd, -1) + zdd)
+
     for i, t0 in enumerate(t[:-1]):
         t1 = t[i+1]
-        i1 = i + 1
 
-        timeit["A2"]
+        # timeit["A3"]
 
-        if t0 < t_max:
-            zdd0 = zdd[i]
-            zdd1 = zdd[i1]
-        else:
-            zdd0 = 0
-            zdd1 = 0
-
-        timeit["A2"]
-
-
-        timeit["A3"]
-
-        zdd_ort = 0.5 * (zdd0 + zdd1)
+        # zdd_ort = 0.5 * (zdd0 + zdd1)
+        zdd_ort = zdd_ort_array[i]
         v1 = v0 - dt * (zdd_ort + w2 * x0 + 0.1 * w * v0)
         v_ort = 0.5 * (v0 + v1)
         x1 = x0 + dt * v_ort
 
-        timeit["A3"]
+        # timeit["A3"]
 
 
-        timeit["A4"]
+        # timeit["A4"]
 
         v_all.append(v1)
         x_all.append(x1)
         t_all.append(t1)
 
-        timeit["A4"]
+        # timeit["A4"]
 
         v0 = v1
         x0 = x1
@@ -138,9 +128,9 @@ spec_t_array = np.arange(minT, maxT-1, 0.0001)
 spec_array = d(spec_t_array)
 
 end = time.time()
-print("Toplam süre:", int((end - start)//60), "dk", int((end-start)%60), "sn" )
+print("Toplam süre:", int((end - start)//60), "dk", (end-start)%60, "sn" )
 
-timeit.report()
+# timeit.report()
 
 plt.plot(spec_t_array, spec_array, '-')
 plt.show()

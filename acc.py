@@ -9,6 +9,7 @@ import math
 import time
 import concurrent.futures
 
+
 start = time.time()
 
 data_path = r"acc_datas"
@@ -54,16 +55,19 @@ def S_acc (T: float):
 
     timeit["A1"]
 
-    while t0 < 40:
+    t = np.arange(0, 30, dt)
+
+    zdd = f(t)
+
+    for i, t0 in enumerate(t[:-1]):
+        t1 = t[i+1]
+        i1 = i + 1
 
         timeit["A2"]
-        i += 1
-        t0 = i * dt
-        t1 = t0 + dt
 
         if t0 < t_max:
-            zdd0 = f(t0)
-            zdd1 = f(t1)
+            zdd0 = zdd[i]
+            zdd1 = zdd[i1]
         else:
             zdd0 = 0
             zdd1 = 0
@@ -100,23 +104,13 @@ def S_acc (T: float):
     return max_acc
 
 minT = 1
-maxT = 5
-spec_interval = 1
+maxT = 15
+spec_interval = 0.1
 
 spec_acc = []
 spec_t = (np.arange(minT,maxT,spec_interval))
 
-# def do_something(seconds):
-#     print(f'Sleeping {seconds} second(s)...')
-#     time.sleep(seconds)
-#     return 'Done Sleeping...'
-#
-# with concurrent.futures.ProcessPoolExecutor() as executor:
-#     secs = [5,4,3,2,1]
-#     results = executor.map(do_something, secs)
-#
-#     for result in results:
-#         print(result)
+
 
 
 # with concurrent.futures.ProcessPoolExecutor() as executor:
@@ -128,7 +122,7 @@ spec_t = (np.arange(minT,maxT,spec_interval))
 # print(spec_acc)
 
 
-i=2
+i=1
 for t in np.arange(minT,maxT,spec_interval):
     perc = (i/len(spec_t))*100
     i += 1

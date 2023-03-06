@@ -215,3 +215,42 @@ for i, val in enumerate(P2):
     print(f"P{i+N}={val}")
 
 
+
+
+
+from _timing import timeit
+import numpy as np
+from scipy import interpolate
+import matplotlib.pyplot as plt
+import os
+import acc_datas
+
+import math
+import time
+import concurrent.futures
+
+
+start = time.time()
+
+data_path = r"acc_datas"
+data_paths = [os.path.join(data_path, name) for name in os.listdir(data_path)]
+all_data = []
+
+for file in data_paths:
+    data = []
+    with open(file, "r") as f:
+        all_data = np.asarray(
+            [(lambda line: list(map(float, line.split("\t"))))(line)
+             for line in f.readlines()],
+            dtype=float)
+
+all_data[:, 1] *= 9.81
+
+
+
+f = interpolate.interp1d(all_data[:, 0], all_data[:, 1])
+
+t = np.arange(0, 30, 0.01)
+
+plt.plot(t, f(t), '-')
+plt.show()

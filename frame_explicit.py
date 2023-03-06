@@ -1,5 +1,5 @@
 import numpy as np
-np.set_printoptions(suppress=True, precision=0)
+np.set_printoptions(suppress=True, precision=2)
 
 nodes = dict()
 elements = dict()
@@ -128,29 +128,19 @@ elements[2].q = [0, -10, 0]  # Distributed load
 
 # Dof Numbering
 counter = 0
-for id, node in nodes.items():
-    if node.rest[0] == 0:
-        node.dof[0] = counter
-        counter += 1
-    if node.rest[1] == 0:
-        node.dof[1] = counter
-        counter += 1
-    if node.rest[2] == 0:
-        node.dof[2] = counter
-        counter += 1
+for i in range(3):
+    for id, node in nodes.items():
+        if node.rest[i] == 0:
+            node.dof[i] = counter
+            counter += 1
 
 N = counter  # Number of unknown Dofs
 
-for id, node in nodes.items():
-    if node.rest[0] == 1:
-        node.dof[0] = counter
-        counter += 1
-    if node.rest[1] == 1:
-        node.dof[1] = counter
-        counter += 1
-    if node.rest[2] == 1:
-        node.dof[2] = counter
-        counter += 1
+for i in range(3):
+    for id, node in nodes.items():
+        if node.rest[i] == 1:
+            node.dof[i] = counter
+            counter += 1
 
 M = counter # Number of All Dofs
 
@@ -170,6 +160,15 @@ for id, elm in elements.items():
     for i in range(len(cv)):
         for j in range(len(cv)):
             KS[cv[i], cv[j]] += KE[i, j]
+
+# MASS Matrix Assembledge (MS)
+MS = np.zeros((M, M))
+for id, elm in elements.items():
+    cv = elm.code_vec()
+    ME = elm.ML()
+    for i in range(len(cv)):
+        for j in range(len(cv)):
+            MS[cv[i], cv[j]] += ME[i, j]
             
     
 # Distributed force vector Assembledge (qS)
@@ -215,9 +214,6 @@ for i, val in enumerate(P2):
     print(f"P{i+N}={val}")
 
 
-
-
-
 from _timing import timeit
 import numpy as np
 from scipy import interpolate
@@ -250,7 +246,32 @@ all_data[:, 1] *= 9.81
 
 f = interpolate.interp1d(all_data[:, 0], all_data[:, 1])
 
-t = np.arange(0, 30, 0.01)
+dt = 0.001
+t_array = np.arange(0, 10, dt)
 
-plt.plot(t, f(t), '-')
+# plt.plot(t_array, f(t_array), '-')
+# plt.show()
+# for t in t_array:
+#     print(t)
+
+MI = np.linalg.inv(MS)
+
+MIK = MI @ KS
+
+unit_vec = np.zeros(M)
+unit_vec[0:int(M/3)]=1.0 
+
+delta = [0]
+
+u = np.zeros(M)
+v = np.zeros(M)
+for t in t_array:
+    zdd = unit_vec * f(t)
+    a = -(zdd + MIK @ u)
+    v += dt * a
+    u += dt * v
+    delta.append(u[2])
+
+plt.plot(t_array, delta[:-1], '-')
 plt.show()
+    

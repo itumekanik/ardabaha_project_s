@@ -121,11 +121,9 @@ Frame2DElement(id=2, n1=4, n2=2, E=28e6, b=0.30, h=0.60)
 
 # Defining restraint and load conditions 
 nodes[1].rest = [1, 1, 1]
-nodes[3].rest = [1, 1, 1]
-nodes[2].rest = [1, 0, 0]
-nodes[2].load = [0, -70, 0]
-elements[1].q = [0, -15, 0]  # Distributed load
-elements[2].q = [0, 0, -10]  # Distributed load
+nodes[2].rest = [1, 1, 1]
+nodes[3].load = [100, 0, 0]
+elements[2].q = [0, -10, 0]  # Distributed load
 
 
 # Dof Numbering
@@ -217,6 +215,3 @@ for i, val in enumerate(P2):
     print(f"P{i+N}={val}")
 
 
-print(K11)
-print(q1)
-print(P1)

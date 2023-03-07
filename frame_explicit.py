@@ -244,10 +244,12 @@ all_data[:, 1] *= 9.81
 
 
 
-f = interpolate.interp1d(all_data[:, 0], all_data[:, 1])
+f = interpolate.interp1d(all_data[:, 0], all_data[:, 1], fill_value=0, bounds_error=False)
+
+
 
 dt = 0.001
-t_array = np.arange(0, 30, dt)
+t_array = np.arange(0, 60, dt)
 
 # plt.plot(t_array, f(t_array), '-')
 # plt.show()
@@ -266,25 +268,16 @@ unit_vec[[0, 1]]=1.0
 
 delta = [0]
 
-dt2 = 0.5 * dt * dt
-
 u = np.zeros(N)
 v = np.zeros(N)
-for t in t_array:
-    zdd = unit_vec * f(t)
+for f in f(t_array):
+    zdd = unit_vec * f
     a = -(zdd + C @ v + MIK @ u)
     v += dt * a
     u += dt * v
     delta.append(u[0])
 
-t2_array = np.arange(30+dt, 50, dt)
-for t in t2_array:
-    zdd = unit_vec * 0
-    a = -(zdd + C @ v + MIK @ u)
-    v += dt * a
-    u += dt * v
-    delta.append(u[0])
-
-plt.plot(np.arange(0, 50, dt), delta[:], '-')
+# plt.plot(np.arange(0, 50, dt), delta[:], '-')
+plt.plot(t_array, delta[:-1], '-')
 plt.show()
     

@@ -45,6 +45,7 @@ def S_acc (T: float):
     w = 2.0 * np.pi / T
     w2 = w ** 2
 
+    a_all = [0]
     v_all = [v0]
     x_all = [x0]
 
@@ -55,13 +56,17 @@ def S_acc (T: float):
     # timeit["A1"]
 
     dt = 0.0001 * 10 * T
-    t_max = 30      
+    t_max = 31      
 
     t = np.arange(0, t_max, dt)
 
     zdd = f(t)
 
     zdd_ort_array =  0.5 * (np.roll(zdd, -1) + zdd)
+
+    zdd_max = abs(max(zdd_ort_array, key=abs)) # Maksimum yer ivmesi
+
+
 
     for i, t0 in enumerate(t[:-1]):
         t1 = t[i+1]
@@ -70,7 +75,7 @@ def S_acc (T: float):
 
         # zdd_ort = 0.5 * (zdd0 + zdd1)
         zdd_ort = zdd_ort_array[i]
-        v1 = v0 - dt * (zdd_ort + w2 * x0 + 0.1 * w * v0)
+        v1 = v0 - dt * (zdd_ort + w2 * x0 + 0.05 * w * v0)
         v_ort = 0.5 * (v0 + v1)
         x1 = x0 + dt * v_ort
 
@@ -79,6 +84,7 @@ def S_acc (T: float):
 
         # timeit["A4"]
 
+        a_all.append(zdd_ort + w2 * x0 + 0.05 * w * v0)
         v_all.append(v1)
         x_all.append(x1)
         t_all.append(t1)
@@ -91,27 +97,16 @@ def S_acc (T: float):
     # plt.plot(t_all, x_all, '-')
     # plt.show()
 
-    max_acc = abs(max(x_all, key=abs))
+    max_acc = abs(max(a_all, key=abs))/zdd_max
 
     return max_acc
 
-minT = 1
-maxT = 15
-spec_interval = 0.1
+minT = 0.01
+maxT = 8
+spec_interval = 0.02
 
 spec_acc = []
 spec_t = (np.arange(minT,maxT,spec_interval))
-
-
-
-
-# with concurrent.futures.ProcessPoolExecutor() as executor:
-#     results = executor.map(S_acc, spec_t)
-#
-#     for result in results:
-#         print(result)
-#
-# print(spec_acc)
 
 
 i=1

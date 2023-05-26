@@ -71,7 +71,7 @@ def main():
 
     # Render and interact
     renderWindow.Render()
-    renderer.GetActiveCamera().Zoom(0.8)
+    renderer.GetActiveCamera().Zoom(0.7)
     renderWindow.Render()
 
     # Initialize must be called prior to creating timer events.
